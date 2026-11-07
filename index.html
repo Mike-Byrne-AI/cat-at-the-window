@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Cat at the Window. Code: MIT-0. Songs: CC0 1.0, made with Suno. Copy, change and share anywhere, with no credit needed. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cat at the Window</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M6 31C4 21 6 15 8 12V3l5 5q3-1 6 0l5-5v9c2 3 4 9 2 19z' fill='%23dc8a45' stroke='%234a4b4f' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="description" content="A cat watching the snow, drawn in code. Play a song and its tail flicks on the beat. Free to keep and share.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cat at the Window">
+<meta property="og:description" content="A cat watching the snow, drawn in code. Play a song and its tail flicks on the beat.">
+<meta property="og:url" content="https://mike-byrne-ai.github.io/cat-at-the-window/">
+<meta property="og:image" content="https://mike-byrne-ai.github.io/cat-at-the-window/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A ginger cat sits at a window, watching snow fall over the rooftops, with a pot of flowers on the sill.">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { --paper: #fbfaf4; --ink: #2b2c30; --pencil: #4a4b4f; --soft: #6b6c70; --rule: #e3dfd2; --accent: #c8372a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.5 system-ui, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: var(--soft); margin: 0 0 18px; }
+  #stage { position: relative; width: 100%; aspect-ratio: 1080 / 330; cursor: pointer; }
+  #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+  #stage:fullscreen { background: var(--paper); cursor: default; }
+  #stage:-webkit-full-screen { background: var(--paper); cursor: default; width: 100%; height: 100%; }
+  #stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .beats { display: flex; gap: 10px; justify-content: center; margin: 14px 0 6px; height: 14px; }
+  .beats i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--pencil); opacity: .35; }
+  .beats i.on { background: var(--pencil); opacity: 1; }
+  .beats i.on.one { background: var(--accent); border-color: var(--accent); }
+  .drop { display: block; position: relative; margin-top: 14px; border: 2px dashed var(--pencil); border-radius: 12px; padding: 18px; text-align: center; cursor: pointer; }
+  .drop.over { background: #f1ecdd; }
+  .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; margin-top: 14px; }
+  button, select { font: inherit; padding: 6px 16px; border: 2px solid var(--pencil); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  #status { color: var(--soft); text-align: center; margin: 10px 0 0; min-height: 1.5em; }
+  .note { color: var(--soft); font-size: 14px; text-align: center; margin-top: 18px; }
+  .note a { color: var(--ink); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Cat at the Window</h1>
+  <p class="sub">A cat watching the snow, drawn in code. Add a song and its tail flicks on the beat. Click the cat to pet it.</p>
+  <div id="stage" title="Pet the cat" role="button" tabindex="0" aria-label="Pet the cat"></div>
+  <div class="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="row" id="songs" hidden><span>Play a song:</span></div>
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="audio/*">
+    <strong>Drop a song here</strong>, or click to pick one (MP3, WAV, M4A...)
+  </label>
+  <div class="row">
+    <button id="play" type="button" disabled>Play</button>
+    <button id="restart" type="button" disabled>Restart</button>
+    <label>Tail flick every <select id="every"><option value="2" selected>2 bars</option><option value="4">4 bars</option><option value="8">8 bars</option></select></label>
+  </div>
+  <div class="row">
+    <label>Coat <select id="coat"></select></label>
+    <label>or any colour <input type="color" id="colour" value="#3a7bd5"></label>
+    <label><input type="checkbox" id="stripes" checked> Stripes</label>
+    <button id="surprise" type="button">Surprise me</button>
+  </div>
+  <div class="row">
+    <button id="save" type="button">Save picture</button>
+    <button id="full" type="button">Full screen</button>
+  </div>
+  <p id="status" aria-live="polite"></p>
+  <p class="note">Your song stays on this computer: the page reads it here and sends it nowhere. Space bar: play and pause.</p>
+  <!-- only:hosted -->
+  <p class="note">Keep it: <a href="cat-at-the-window.html" download>download the whole thing as one file</a>, songs included. It works offline in any browser.</p>
+  <!-- /only -->
+  <!-- only:file
+  <p class="note">Play it online, or get a newer copy: <a href="https://mike-byrne-ai.github.io/cat-at-the-window/">mike-byrne-ai.github.io/cat-at-the-window</a></p>
+  /only -->
+  <p class="note">Cat at the Window, by <a href="https://michaelbyrne.dev">Michael Byrne</a>. Code: MIT-0. Songs: CC0 1.0, made with Suno. Copy, change and share anywhere, with no credit needed. Source: <a href="https://github.com/Mike-Byrne-AI/cat-at-the-window">github.com/Mike-Byrne-AI/cat-at-the-window</a></p>
+</main>
+<script src="songs.js"></script>
+<script src="cat.js"></script>
+<script src="beats.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
