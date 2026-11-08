@@ -3,7 +3,6 @@
 (function () {
 'use strict';
 const S = window.Stage, $ = (id) => document.getElementById(id);
-const dots = Array.from(document.querySelectorAll('.beats i'));
 // Songs play through an audio element: it starts while the file is still arriving, and a
 // phone treats it as music, not as a sound effect.
 const audio = new Audio();
@@ -37,9 +36,6 @@ function frame() {
   const t = beat ? songTime() : (performance.now() - freeClock) / 1000;
   S.now.t = t;
   cat.render();
-
-  const k = beat && !audio.paused ? Math.floor((t - beat.offset) / beat.period) : -1, on = k >= 0 && (t - beat.offset) % beat.period < 0.12;
-  dots.forEach((d, i) => { d.classList.toggle('on', on && ((k - beat.bar) % 4 + 4) % 4 === i); d.classList.toggle('one', i === 0); });
   requestAnimationFrame(frame);
 }
 
@@ -53,7 +49,7 @@ function play() {
 $('play').onclick = () => { if (audio.paused) play(); else audio.pause(); };
 $('restart').onclick = () => { audio.currentTime = 0; play(); };
 
-const lineUp = (r) => `${r.bpm.toFixed(1)} BPM. The tail lands its flick on a bar's first beat, lined up with ` + (r.drop ? `the drop at ${r.drop.toFixed(1)} s` : 'the first bar') + '.';
+const lineUp = (r) => `${r.bpm.toFixed(1)} BPM. The tail flicks on the beat, lined up with ` + (r.drop ? `the drop at ${r.drop.toFixed(1)} s` : 'the first bar') + '.';
 function useSong(url, own, r, text) {
   audio.pause();
   if (songUrl && ownUrl) URL.revokeObjectURL(songUrl);

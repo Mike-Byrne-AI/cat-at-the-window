@@ -28,10 +28,6 @@
   #stage:fullscreen { background: var(--paper); cursor: default; }
   #stage:-webkit-full-screen { background: var(--paper); cursor: default; width: 100%; height: 100%; }
   #stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .beats { display: flex; gap: 10px; justify-content: center; margin: 14px 0 6px; height: 14px; }
-  .beats i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--pencil); opacity: .35; }
-  .beats i.on { background: var(--pencil); opacity: 1; }
-  .beats i.on.one { background: var(--accent); border-color: var(--accent); }
   .drop { display: block; position: relative; margin-top: 14px; border: 2px dashed var(--pencil); border-radius: 12px; padding: 18px; text-align: center; cursor: pointer; }
   .drop.over { background: #f1ecdd; }
   .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 3px; }
@@ -49,7 +45,6 @@
   <h1>Cat at the Window</h1>
   <p class="sub">A cat watching the snow, drawn in code. Add a song and its tail flicks on the beat. Click the cat to pet it.</p>
   <div id="stage" title="Pet the cat" role="button" tabindex="0" aria-label="Pet the cat"></div>
-  <div class="beats" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="row" id="songs" hidden><span>Play a song:</span></div>
   <label class="drop" id="drop">
     <input type="file" id="file" accept="audio/*">
@@ -532,7 +527,6 @@ window.Beats = { analyse, drift, phases };
 (function () {
 'use strict';
 const S = window.Stage, $ = (id) => document.getElementById(id);
-const dots = Array.from(document.querySelectorAll('.beats i'));
 // Songs play through an audio element: it starts while the file is still arriving, and a
 // phone treats it as music, not as a sound effect.
 const audio = new Audio();
@@ -566,9 +560,6 @@ function frame() {
   const t = beat ? songTime() : (performance.now() - freeClock) / 1000;
   S.now.t = t;
   cat.render();
-
-  const k = beat && !audio.paused ? Math.floor((t - beat.offset) / beat.period) : -1, on = k >= 0 && (t - beat.offset) % beat.period < 0.12;
-  dots.forEach((d, i) => { d.classList.toggle('on', on && ((k - beat.bar) % 4 + 4) % 4 === i); d.classList.toggle('one', i === 0); });
   requestAnimationFrame(frame);
 }
 
@@ -582,7 +573,7 @@ function play() {
 $('play').onclick = () => { if (audio.paused) play(); else audio.pause(); };
 $('restart').onclick = () => { audio.currentTime = 0; play(); };
 
-const lineUp = (r) => `${r.bpm.toFixed(1)} BPM. The tail lands its flick on a bar's first beat, lined up with ` + (r.drop ? `the drop at ${r.drop.toFixed(1)} s` : 'the first bar') + '.';
+const lineUp = (r) => `${r.bpm.toFixed(1)} BPM. The tail flicks on the beat, lined up with ` + (r.drop ? `the drop at ${r.drop.toFixed(1)} s` : 'the first bar') + '.';
 function useSong(url, own, r, text) {
   audio.pause();
   if (songUrl && ownUrl) URL.revokeObjectURL(songUrl);
